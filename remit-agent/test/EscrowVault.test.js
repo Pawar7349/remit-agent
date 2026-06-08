@@ -37,8 +37,6 @@ describe("EscrowVault", function () {
     expect(await escrow.feeCollector()).to.equal(feeCollector.address);
   });
 
-  
-
   it("should  lock USDC in the contract", async function(){
     await escrow.connect(sender).createRemittance(
       recipient.address,
@@ -47,9 +45,22 @@ describe("EscrowVault", function () {
       "US-MX",
       3600
     )
-
     const balance = await mockUSDC.balanceOf(await escrow.getAddress());
     expect(balance).to.equal(USDC(200));
   })
+   
+  //reverts when amount is zero
+  it("should revert if amount is zero", async function(){
+    await expect(
+      escrow.connect(sender).createRemittance(
+        recipient.address,
+        USDC(0),
+        50,
+        "US-MX",
+        3600
+      )
+    ).to.be.revertedWithCustomError(escrow, "InvalidAmount");
+  })
+
 
 });
