@@ -62,5 +62,21 @@ describe("EscrowVault", function () {
     ).to.be.revertedWithCustomError(escrow, "InvalidAmount");
   })
 
+  it("should revert if recipient is zero address", async function(){
+    await expect(
+      escrow.connect(sender).createRemittance(
+        ethers.ZeroAddress,
+        USDC(200),
+        50,
+        "US-MX",
+        3600
+      )
+    ).to.be.revertedWithCustomError(escrow, "InvalidRecipient");
+  })
+
+
+
+
+
 
 });
