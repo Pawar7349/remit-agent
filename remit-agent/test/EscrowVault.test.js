@@ -74,9 +74,18 @@ describe("EscrowVault", function () {
     ).to.be.revertedWithCustomError(escrow, "InvalidRecipient");
   })
 
+  it("should revert if fee exceeds 2% hard cap", async function(){
+    await expect(
+      escrow.connect(sender).createRemittance(
+        recipient.address,
+        USDC(200),
+        201,
+        "US-MX",
+        3600
+      )
+    ).to.be.revertedWithCustomError(escrow, "InvalidAmount");
+  });
 
-
-
-
+  
 
 });
