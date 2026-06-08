@@ -37,6 +37,8 @@ describe("EscrowVault", function () {
     expect(await escrow.feeCollector()).to.equal(feeCollector.address);
   });
 
+  
+
   it("should  lock USDC in the contract", async function(){
     await escrow.connect(sender).createRemittance(
       recipient.address,
