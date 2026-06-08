@@ -86,6 +86,18 @@ describe("EscrowVault", function () {
     ).to.be.revertedWithCustomError(escrow, "InvalidAmount");
   });
 
+  it("should emits RemittanceCreatedd event", async function(){
+    await expect(
+      escrow.connect(sender).createRemittance(
+        recipient.address,
+        USDC(200),
+        50,
+        "US-MX",
+        3600
+      )
+    ).to.emit(escrow, "RemittanceCreated");
+  });
+})
+
   
 
-});
