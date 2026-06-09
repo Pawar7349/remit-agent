@@ -191,6 +191,29 @@ describe("EscrowVault", function () {
     ).to.emit(escrow, "RemittanceReleased");
   })
 
+  //Refund Tests
+
+  it("refund full amount to sender after TTL expires", async function(){
+    const tx = await escrow.connect(sender).createRemittance(
+      recipient.address, USDC(200), 50, "US-MX", 60
+    );
+
+    const receipt = await tx.wait();
+    const event = receipt.logs.find(log => log.fragment?.name === "RemittanceCreated");
+    const remittanceId = event.args[0];
+
+    await ethers.provider.send("evm_increaseTime", [61]); 
+    await ethers.provider.send("evm_mine");
+
+    const balanceBefore = await mockUSDC.balanceOf(sender.address);
+    await escrow.connect(sender).refund(
+      remittanceId
+    );
+    const balanceAfter = await mockUSDC.balanceOf(sender.address);
+    
+    expect(balanceAfter - balanceBefore).to.equal(USDC(200));
+  })
+
 
   
 
