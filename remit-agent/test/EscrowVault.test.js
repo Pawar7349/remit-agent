@@ -227,6 +227,28 @@ describe("EscrowVault", function () {
     )).to.be.revertedWithCustomError(escrow, "NotExpiredYet");
   })
 
+  it("reverts if already refunded", async function () {
+    const tx = await escrow.connect(sender).createRemittance(
+      recipient.address, USDC(200), 50, "US-MX", 60
+    );
+    const receipt = await tx.wait();
+    const event = receipt.logs.find(log => log.fragment?.name === "RemittanceCreated");
+    const remittanceId = event.args[0];
+
+    await ethers.provider.send("evm_increaseTime", [61]); 
+    await ethers.provider.send("evm_mine");
+    
+    await escrow.connect(sender).refund(
+      remittanceId
+    );
+    
+    await expect(escrow.connect(sender).refund(
+      remittanceId
+    )).to.be.revertedWithCustomError(escrow, "AlreadySettled");
+    
+
+  })
+
 
   
 
