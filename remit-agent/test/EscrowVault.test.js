@@ -296,6 +296,19 @@ describe("EscrowVault", function () {
     expect(volume).to.equal(USDC(200));
   })
 
+  it("totalSaved tracks correctly", async function () {
+    await escrow.connect(sender).createRemittance(
+      recipient.address, USDC(200), 50, "US-MX", 60
+    );
+    console.log(USDC(200).toString());
+    const [volume, saved] = await escrow.getImpactStats();
+
+    const wuFee = (200_000_000n * 600n) / 10000n;
+    const ourFee = (200_000_000n * 50n) / 10000n;
+    const expectedSaved = wuFee - ourFee;
+    expect(saved).to.equal(expectedSaved);
+  })
+
 
 })
 
