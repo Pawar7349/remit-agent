@@ -245,7 +245,15 @@ describe("EscrowVault", function () {
     await expect(escrow.connect(sender).refund(
       remittanceId
     )).to.be.revertedWithCustomError(escrow, "AlreadySettled");
-    
+
+
+  })
+
+  it("blocks createRemittance when paused", async function(){
+    await escrow.connect(owner).pause();
+    await expect( escrow.connect(sender).createRemittance(
+      recipient.address, USDC(200), 50, "US-MX", 3600
+    )).to.be.revert(ethers);
 
   })
 
