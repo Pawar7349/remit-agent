@@ -288,6 +288,14 @@ describe("EscrowVault", function () {
     expect(await escrow.feeCollector()).to.equal(owner.address);
   })
 
+  it("totalVolume tracks correctly", async function () {
+    await escrow.connect(sender).createRemittance(
+      recipient.address, USDC(200), 50, "US-MX", 60
+    );
+    const [volume, saved] = await escrow.getImpactStats();
+    expect(volume).to.equal(USDC(200));
+  })
+
 
 })
 
