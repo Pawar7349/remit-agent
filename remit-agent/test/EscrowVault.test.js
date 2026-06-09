@@ -249,13 +249,27 @@ describe("EscrowVault", function () {
 
   })
 
+  //Pause
+
   it("blocks createRemittance when paused", async function(){
     await escrow.connect(owner).pause();
     await expect( escrow.connect(sender).createRemittance(
       recipient.address, USDC(200), 50, "US-MX", 3600
     )).to.be.revert(ethers);
-
   })
+
+  //unpause
+
+  it("allows createRemittance after unpause", async function(){
+    await escrow.connect(owner).pause();
+    await escrow.connect(owner).unpause();
+
+    await expect(escrow.connect(sender).createRemittance(
+      recipient.address, USDC(200), 50, "US-MX", 3600
+    )).to.not.be.revert(ethers);
+  })
+
+
 
 
   
