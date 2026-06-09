@@ -129,6 +129,26 @@ describe("EscrowVault", function () {
     expect(balanceAfter - balanceBefore).to.equal(expectedPayout);
   })
 
+  it("fee goes to feeCollector afer release", async function(){
+    const tx = await escrow.connect(sender).createRemittance(
+      recipient.address, USDC(200), 50, "US-MX", 3600
+    );
+
+    const receipt = await tx.wait();
+    const event = receipt.logs.find(log => log.fragment?.name === "RemittanceCreated");
+    const remittanceId = event.args[0];
+    
+    const balanceBefore = await mockUSDC.balanceOf(feeCollector.address);
+    await escrow.connect(agent).release(remittanceId);
+
+    const balanceAfter = await mockUSDC.balanceOf(feeCollector.address);
+    
+    const amount = 200_000_000n;
+    const fee = (amount * 50n) / 10000n;
+
+    expect(balanceAfter - balanceBefore).to.equal(fee);
+  })
+
 
  
 
