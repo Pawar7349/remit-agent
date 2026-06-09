@@ -163,6 +163,21 @@ describe("EscrowVault", function () {
       escrow.connect(sender).release(remittanceId)
     ).to.be.revert(ethers);
   })
+
+  it("reverts if remittance already released", async function () {
+     const tx = await escrow.connect(sender).createRemittance(
+      recipient.address, USDC(200), 50, "US-MX", 3600
+    );
+
+    const receipt = await tx.wait();
+    const event = receipt.logs.find(log => log.fragment?.name === "RemittanceCreated");
+    const remittanceId = event.args[0];
+
+    await escrow.connect(agent).release(remittanceId);
+     
+  })
+
+
   
 
 })
