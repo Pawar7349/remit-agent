@@ -283,6 +283,11 @@ describe("EscrowVault", function () {
     expect(r.status).to.equal(0n);
   })
 
+  it("setFeeCollector updates address", async function () {
+    await escrow.connect(owner).setFeeCollector(owner.address);
+    expect(await escrow.feeCollector()).to.equal(owner.address);
+  })
+
 
 })
 
