@@ -1,5 +1,7 @@
 import hardhatToolboxMochaEthersPlugin from "@nomicfoundation/hardhat-toolbox-mocha-ethers";
 import { configVariable, defineConfig } from "hardhat/config";
+import "dotenv/config";
+import "@nomicfoundation/hardhat-verify";
 
 export default defineConfig({
   plugins: [hardhatToolboxMochaEthersPlugin],
@@ -33,6 +35,12 @@ export default defineConfig({
       chainType: "l1",
       url: configVariable("SEPOLIA_RPC_URL"),
       accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+    },
+    baseSepolia: {
+      type: "http",
+      chainType: "op",
+      url: process.env.BASE_SEPOLIA_RPC!,
+      accounts: [process.env.PRIVATE_KEY!],
     },
   },
 });
