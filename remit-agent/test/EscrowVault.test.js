@@ -250,7 +250,6 @@ describe("EscrowVault", function () {
   })
 
   //Pause
-
   it("blocks createRemittance when paused", async function(){
     await escrow.connect(owner).pause();
     await expect( escrow.connect(sender).createRemittance(
@@ -259,7 +258,6 @@ describe("EscrowVault", function () {
   })
 
   //unpause
-
   it("allows createRemittance after unpause", async function(){
     await escrow.connect(owner).pause();
     await escrow.connect(owner).unpause();
@@ -269,10 +267,22 @@ describe("EscrowVault", function () {
     )).to.not.be.revert(ethers);
   })
 
+  it("getRemittance returns correct data", async function(){
+    const tx = await escrow.connect(sender).createRemittance(
+      recipient.address, USDC(200), 50, "US-MX", 60
+    );
 
+    const receipt = await tx.wait();
+    const event = receipt.logs.find(log => log.fragment?.name === "RemittanceCreated");
+    const remittanceId = event.args[0];
 
+    const r = await escrow.getRemittance(remittanceId);
+    
+    expect(r.sender).to.equal(sender.address);
+    expect(r.amount).to.equal(USDC(200));
+    expect(r.status).to.equal(0n);
+  })
 
-  
 
 })
 
