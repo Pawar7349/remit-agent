@@ -97,6 +97,42 @@ describe("EscrowVault", function () {
       )
     ).to.emit(escrow, "RemittanceCreated");
   });
+
+
+  //Release tests
+
+  it("agent calls release, recipient correct payout", async function(){
+
+    const tx = await escrow.connect(sender).createRemittance(
+      recipient.address, USDC(200), 50, "US-MX", 3600
+    );
+
+    const receipt = await tx.wait();
+    const event = receipt.logs.find(log => log.fragment?.name === "RemittanceCreated");
+    const remittanceId = event.args[0];
+    
+    //check balance befor release
+    const balanceBefore = await mockUSDC.balanceOf(recipient.address);
+
+    //agent releases
+    await escrow.connect(agent).release(remittanceId);
+
+    // check balance after release
+
+    const balanceAfter = await mockUSDC.balanceOf(recipient.address);
+
+    //calcullate expected  payout
+    const amount = 200_000_000n;
+    const fee = (amount * 50n) / 10000n;
+    const expectedPayout = amount - fee;
+
+    expect(balanceAfter - balanceBefore).to.equal(expectedPayout);
+  })
+
+
+ 
+
+
 })
 
   
