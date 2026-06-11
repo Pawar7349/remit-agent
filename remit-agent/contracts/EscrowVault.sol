@@ -59,7 +59,7 @@ contract EscrowVault is ReentrancyGuard, AccessControl, Pausable {
   error TransferFailed();
   error RemittanceNotFound();
 
-  // Constructor 
+  //Constructor 
   constructor(address _usdc, address _feeCollector) {
 
     require(_usdc != address(0), "Invalid USDC");
